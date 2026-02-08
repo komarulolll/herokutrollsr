@@ -43,19 +43,6 @@ from telethon.tl.types import Message
 class KomarutrollMod(loader.Module):
     """Module for insults, make the interlocuter depressed."""
 
-    __version__ = (1, 0, 0)
-
-import json
-import aiohttp
-import asyncio
-from random import choice
-from .. import loader, utils
-from telethon.tl.types import Message
-
-@loader.tds
-class KomarutrollMod(loader.Module):
-    """Module for insults, make the interlocuter depressed."""
-
     strings = {
         "name": "KomaruTroll",
         "error_key": "<b><i>Error: Key 'TrollText' not found.</i></b>",
@@ -124,23 +111,27 @@ class KomarutrollMod(loader.Module):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status == 200:
-                    data = await response.json()
-                    if "TrollText" in data:
-                        text = choice(data["TrollText"])
-                        replied = await message.get_reply_message()
-                        words = text.split()
-                        
-                        for word in words:
-                            if not self.is_active:
-                                break
-                            await self.client.send_message(
-                                message.chat_id,
-                                word,
-                                reply_to=replied.id
-                            )
-                            await asyncio.sleep(0.1)
-                    else:
-                        await utils.answer(message, self.strings("error_key"))
+                    response_text = await response.text()
+                    try:
+                        data = json.loads(response_text)
+                        if "TrollText" in data:
+                            text = choice(data["TrollText"])
+                            replied = await message.get_reply_message()
+                            words = text.split()
+                            
+                            for word in words:
+                                if not self.is_active:
+                                    break
+                                await self.client.send_message(
+                                    message.chat_id,
+                                    word,
+                                    reply_to=replied.id
+                                )
+                                await asyncio.sleep(0.1)
+                        else:
+                            await utils.answer(message, self.strings("error_key"))
+                    except json.JSONDecodeError:
+                        await utils.answer(message, self.strings("error_decoding"))
                 else:
                     await utils.answer(message, f"{self.strings('error_uploading_data')}: {response.status}")
 
@@ -178,23 +169,27 @@ class KomarutrollMod(loader.Module):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status == 200:
-                    data = await response.json()
-                    if "TrollText" in data:
-                        while self.is_active:
-                            text = choice(data["TrollText"])
-                            words = text.split()
-                            for word in words:
-                                if not self.is_active:
-                                    break
-                                await message.client.send_message(
-                                    message.chat_id,
-                                    word,
-                                    reply_to=replied.id
-                                )
-                                await asyncio.sleep(0.1)
-                            await asyncio.sleep(time)
-                    else:
-                        await utils.answer(message, self.strings("error_key"))
+                    response_text = await response.text()
+                    try:
+                        data = json.loads(response_text)
+                        if "TrollText" in data:
+                            while self.is_active:
+                                text = choice(data["TrollText"])
+                                words = text.split()
+                                for word in words:
+                                    if not self.is_active:
+                                        break
+                                    await message.client.send_message(
+                                        message.chat_id,
+                                        word,
+                                        reply_to=replied.id
+                                    )
+                                    await asyncio.sleep(0.1)
+                                await asyncio.sleep(time)
+                        else:
+                            await utils.answer(message, self.strings("error_key"))
+                    except json.JSONDecodeError:
+                        await utils.answer(message, self.strings("error_decoding"))
                 else:
                     await utils.answer(message, f"{self.strings('error_uploading_data')}: {response.status}")
 
