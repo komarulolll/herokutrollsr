@@ -102,7 +102,7 @@ class KomarutrollMod(loader.Module):
     )
     async def komarutroll(self, message):
         """Insult your interlocutor"""
-        url = "https://raw.githubusercontent.com/komarulolll/herokutrollsr/main/TrollText.json"
+        url = "https://raw.githubusercontent.com/komarulolll/herokutrollsr/refs/heads/main/TrollText.json"
         
         if not message.is_reply:
             await utils.answer(message, "<b><i>Reply to a message!</i></b>")
@@ -143,7 +143,7 @@ class KomarutrollMod(loader.Module):
     )
     async def komaruspam(self, message: Message):
         """[time] [text] - Spam your interlocutor with insults"""
-        url = "https://raw.githubusercontent.com/komarulolll/herokutrollsr/main/TrollText.json"
+        url = "https://raw.githubusercontent.com/komarulolll/herokutrollsr/refs/heads/main/TrollText.json"
         args = utils.get_args(message)
 
         if not message.is_reply:
