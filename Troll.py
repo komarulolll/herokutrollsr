@@ -102,6 +102,7 @@ class KomarutrollMod(loader.Module):
     )
     async def komarutroll(self, message):
         """Insult your interlocutor"""
+        # Вот правильный URL для твоего репозитория
         url = "https://raw.githubusercontent.com/komarulolll/herokutrollsr/refs/heads/main/TrollText.json"
         
         if not message.is_reply:
@@ -111,8 +112,10 @@ class KomarutrollMod(loader.Module):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status == 200:
+                    # Используем text() вместо json()
                     response_text = await response.text()
                     try:
+                        # Парсим JSON вручную
                         data = json.loads(response_text)
                         if "TrollText" in data:
                             text = choice(data["TrollText"])
@@ -130,7 +133,8 @@ class KomarutrollMod(loader.Module):
                                 await asyncio.sleep(0.1)
                         else:
                             await utils.answer(message, self.strings("error_key"))
-                    except json.JSONDecodeError:
+                    except json.JSONDecodeError as e:
+                        print(f"JSON decode error: {e}")
                         await utils.answer(message, self.strings("error_decoding"))
                 else:
                     await utils.answer(message, f"{self.strings('error_uploading_data')}: {response.status}")
@@ -199,6 +203,11 @@ class KomarutrollMod(loader.Module):
         de_doc="Hört auf mit den Beleidigungen",
         es_doc="basta de insultos",
     )
+    async def komaruoff(self, message: Message):
+        """Stop the insults"""
+        self.is_active = False
+        await utils.answer(message, self.strings("stopped"))
+        return
     async def komaruoff(self, message: Message):
         """Stop the insults"""
         self.is_active = False
