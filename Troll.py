@@ -102,7 +102,6 @@ class KomarutrollMod(loader.Module):
     )
     async def komarutroll(self, message):
         """Insult your interlocutor"""
-        # Вот правильный URL для твоего репозитория
         url = "https://raw.githubusercontent.com/komarulolll/herokutrollsr/refs/heads/main/TrollText.json"
         
         if not message.is_reply:
@@ -112,10 +111,8 @@ class KomarutrollMod(loader.Module):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status == 200:
-                    # Используем text() вместо json()
                     response_text = await response.text()
                     try:
-                        # Парсим JSON вручную
                         data = json.loads(response_text)
                         if "TrollText" in data:
                             text = choice(data["TrollText"])
@@ -145,7 +142,7 @@ class KomarutrollMod(loader.Module):
         de_doc="[time] [text] - Spammen Sie Ihren Gesprächspartner mit Beleidigungen zu",
         es_doc="[time] [text] - Spamea a tu interlocutor con insultos",
     )
-    async def komaruspam(self, message: Message):
+    async def komarusp(self, message: Message):
         """[time] [text] - Spam your interlocutor with insults"""
         url = "https://raw.githubusercontent.com/komarulolll/herokutrollsr/refs/heads/main/TrollText.json"
         args = utils.get_args(message)
